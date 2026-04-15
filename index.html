@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ulises Téllez — Desarrollador Fullstack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── RESET & BASE ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d1117;
+      --bg2:       #161b22;
+      --bg3:       #1c2128;
+      --border:    #30363d;
+      --accent:    #2ea887;
+      --accent2:   #56d3b4;
+      --text:      #e6edf3;
+      --text2:     #8b949e;
+      --text3:     #c9d1d9;
+      --radius:    12px;
+      --transition: 0.3s ease;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    a { color: var(--accent2); text-decoration: none; transition: color var(--transition); }
+    a:hover { color: var(--accent); }
+
+    /* ─── SCROLLBAR ────────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+
+    /* ─── NAVBAR ───────────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 5%;
+      background: rgba(13, 17, 23, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid transparent;
+      transition: border-color var(--transition);
+    }
+    nav.scrolled { border-bottom-color: var(--border); }
+
+    .nav-logo {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--accent2);
+    }
+    .nav-logo span { color: var(--text2); }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.9rem;
+      color: var(--text2);
+      font-weight: 500;
+      transition: color var(--transition);
+    }
+    .nav-links a:hover { color: var(--accent2); }
+
+    .nav-cta {
+      font-size: 0.85rem;
+      padding: 0.5rem 1.2rem;
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      color: var(--accent2) !important;
+      transition: background var(--transition), color var(--transition) !important;
+    }
+    .nav-cta:hover {
+      background: var(--accent) !important;
+      color: var(--bg) !important;
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--text2);
+      border-radius: 2px;
+      transition: var(--transition);
+    }
+
+    /* ─── HERO ─────────────────────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 8rem 5% 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(46, 168, 135, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(46, 168, 135, 0.04) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(46, 168, 135, 0.12) 0%, transparent 70%);
+      top: 10%;
+      right: 5%;
+      pointer-events: none;
+      border-radius: 50%;
+    }
+
+    .hero-content {
+      max-width: 750px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(46, 168, 135, 0.1);
+      border: 1px solid rgba(46, 168, 135, 0.3);
+      border-radius: 100px;
+      padding: 0.35rem 1rem;
+      font-size: 0.8rem;
+      color: var(--accent2);
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.2s forwards;
+    }
+    .hero-badge::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.3); }
+    }
+
+    .hero-title {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 1.2rem;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.4s forwards;
+    }
+    .hero-title .name { color: var(--text); }
+    .hero-title .role {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: block;
+    }
+
+    .hero-desc {
+      font-size: 1.1rem;
+      color: var(--text2);
+      max-width: 540px;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.6s forwards;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.8s forwards;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 2rem;
+      background: var(--accent);
+      color: var(--bg);
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+    }
+    .btn-primary:hover {
+      background: var(--accent2);
+      color: var(--bg);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(46, 168, 135, 0.3);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 2rem;
+      border: 1px solid var(--border);
+      color: var(--text3);
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: border-color var(--transition), color var(--transition), transform var(--transition);
+    }
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent2);
+      transform: translateY(-2px);
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      opacity: 0;
+      animation: fadeUp 0.6s 1s forwards;
+    }
+    .stat-num {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--accent2);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text2);
+      margin-top: 0.1rem;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── SECTION COMMONS ──────────────────────────────────────────── */
+    section {
+      padding: 6rem 5%;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+    .section-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 0.75rem;
+    }
+    .section-title {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 700;
+      color: var(--text);
+    }
+    .section-line {
+      width: 48px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 2px;
+      margin: 1rem auto 0;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── ABOUT ────────────────────────────────────────────────────── */
+    #about { background: var(--bg2); }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .about-text p {
+      color: var(--text3);
+      margin-bottom: 1.2rem;
+      font-size: 1rem;
+    }
+    .about-text strong { color: var(--accent2); }
+
+    .about-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .about-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      transition: border-color var(--transition), transform var(--transition);
+    }
+    .about-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+    }
+    .about-card-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .about-card-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.25rem;
+    }
+    .about-card-text {
+      font-size: 0.78rem;
+      color: var(--text2);
+    }
+
+    /* ─── STACK ────────────────────────────────────────────────────── */
+    #stack { background: var(--bg); }
+
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 1rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .stack-item {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem 1rem;
+      text-align: center;
+      transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+      cursor: default;
+    }
+    .stack-item:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(46, 168, 135, 0.12);
+    }
+    .stack-icon {
+      font-size: 2rem;
+      margin-bottom: 0.6rem;
+    }
+    .stack-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text3);
+    }
+    .stack-type {
+      font-size: 0.7rem;
+      color: var(--text2);
+      margin-top: 0.2rem;
+    }
+
+    /* ─── PROJECTS ─────────────────────────────────────────────────── */
+    #projects { background: var(--bg2); }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .project-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .project-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform var(--transition);
+    }
+    .project-card:hover {
+      border-color: rgba(46, 168, 135, 0.4);
+      transform: translateY(-5px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+    }
+    .project-card:hover::before { transform: scaleX(1); }
+
+    .project-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .project-icon {
+      font-size: 2rem;
+      flex-shrink: 0;
+    }
+    .project-links {
+      display: flex;
+      gap: 0.75rem;
+      flex-shrink: 0;
+    }
+    .project-link {
+      color: var(--text2);
+      font-size: 1.1rem;
+      transition: color var(--transition);
+    }
+    .project-link:hover { color: var(--accent2); }
+
+    .project-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .project-subtitle {
+      font-size: 0.78rem;
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 0.2rem;
+    }
+    .project-desc {
+      font-size: 0.9rem;
+      color: var(--text2);
+      flex: 1;
+      line-height: 1.7;
+    }
+
+    .project-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .project-features li {
+      font-size: 0.82rem;
+      color: var(--text3);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    .project-features li::before {
+      content: '▸';
+      color: var(--accent);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: auto;
+    }
+    .tag {
+      font-size: 0.72rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 0.25rem 0.65rem;
+      background: rgba(46, 168, 135, 0.1);
+      border: 1px solid rgba(46, 168, 135, 0.2);
+      border-radius: 4px;
+      color: var(--accent2);
+    }
+
+    /* ─── EXPERIENCE ───────────────────────────────────────────────── */
+    #experience { background: var(--bg); }
+
+    .timeline {
+      max-width: 700px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 18px;
+      top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+    }
+
+    .timeline-item {
+      padding-left: 56px;
+      position: relative;
+      margin-bottom: 2.5rem;
+    }
+    .timeline-item:last-child { margin-bottom: 0; }
+
+    .timeline-dot {
+      position: absolute;
+      left: 10px;
+      top: 4px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--bg2);
+      border: 2px solid var(--accent);
+      transition: background var(--transition);
+    }
+    .timeline-item:hover .timeline-dot { background: var(--accent); }
+
+    .timeline-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      margin-bottom: 0.35rem;
+    }
+    .timeline-role {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .timeline-company {
+      font-size: 0.85rem;
+      color: var(--text2);
+      margin-bottom: 0.75rem;
+    }
+    .timeline-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .timeline-list li {
+      font-size: 0.85rem;
+      color: var(--text3);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    .timeline-list li::before {
+      content: '→';
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* ─── CONTACT ──────────────────────────────────────────────────── */
+    #contact { background: var(--bg2); }
+
+    .contact-inner {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .contact-inner p {
+      color: var(--text2);
+      margin-bottom: 2.5rem;
+      font-size: 1rem;
+    }
+
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      color: var(--text3);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: border-color var(--transition), color var(--transition), transform var(--transition);
+    }
+    .contact-link:hover {
+      border-color: var(--accent);
+      color: var(--accent2);
+      transform: translateY(-2px);
+    }
+    .contact-link svg { flex-shrink: 0; }
+
+    .contact-availability {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text2);
+    }
+    .avail-dot {
+      width: 8px;
+      height: 8px;
+      background: #3fb950;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    /* ─── FOOTER ───────────────────────────────────────────────────── */
+    footer {
+      padding: 2rem 5%;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg);
+    }
+    .footer-text {
+      font-size: 0.8rem;
+      color: var(--text2);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .footer-text span { color: var(--accent2); }
+
+    /* ─── RESPONSIVE ───────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: var(--bg2); padding: 1.5rem 5%; gap: 1.2rem; border-bottom: 1px solid var(--border); }
+      .nav-links.open { display: flex; }
+      .hamburger { display: flex; }
+
+      .hero-stats { gap: 2rem; }
+
+      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+
+      .projects-grid { grid-template-columns: 1fr; }
+
+      .timeline::before { left: 12px; }
+      .timeline-item { padding-left: 40px; }
+      .timeline-dot { left: 4px; }
+
+      footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── NAVBAR ──────────────────────────────────────────────────── -->
+  <nav id="navbar">
+    <div class="nav-logo"><span>&lt;</span>ulises<span>/&gt;</span></div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#about">Sobre mí</a></li>
+      <li><a href="#stack">Stack</a></li>
+      <li><a href="#projects">Proyectos</a></li>
+      <li><a href="#experience">Experiencia</a></li>
+      <li><a href="#contact" class="nav-cta">Contacto</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- ─── HERO ────────────────────────────────────────────────────── -->
+  <section id="hero">
+    <div class="hero-grid-bg"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-content">
+      <div class="hero-badge">Disponible para nuevas oportunidades</div>
+      <h1 class="hero-title">
+        <span class="name">Ulises Téllez</span>
+        <span class="role">Desarrollador Fullstack</span>
+      </h1>
+      <p class="hero-desc">
+        Ingeniero en Sistemas con enfoque en desarrollo fullstack y automatización.
+        Construyo productos reales: dashboards administrativos, bots de automatización e
+        integraciones con APIs de pago en producción.
+      </p>
+      <div class="hero-actions">
+        <a href="#projects" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Ver proyectos
+        </a>
+        <a href="#contact" class="btn-secondary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+          Contactar
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="stat-num">390+</div>
+          <div class="stat-label">Commits en producción</div>
+        </div>
+        <div>
+          <div class="stat-num">3</div>
+          <div class="stat-label">Proyectos activos</div>
+        </div>
+        <div>
+          <div class="stat-num">B1</div>
+          <div class="stat-label">Inglés técnico</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── ABOUT ───────────────────────────────────────────────────── -->
+  <section id="about">
+    <div class="section-header reveal">
+      <span class="section-tag">// 01. sobre_mi</span>
+      <h2 class="section-title">¿Quién soy?</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>
+          Soy <strong>Ingeniero en Sistemas Computacionales</strong> de Texcoco, Méx., con
+          estudios concluidos y actualmente en proceso de titulación. Me especializo en
+          desarrollo fullstack y automatización de procesos.
+        </p>
+        <p>
+          Mi experiencia más sólida viene de construir, desde cero y en producción,
+          un ecosistema completo para una empresa de viajes: un
+          <strong>dashboard administrativo</strong>, un sistema de
+          <strong>automatización con n8n</strong> y una
+          <strong>plataforma de membresías con Stripe</strong>.
+        </p>
+        <p>
+          Me adapto rápido, aprendo haciendo y me importa entregar
+          valor real, no solo código que funciona en local.
+        </p>
+      </div>
+      <div class="about-cards reveal">
+        <div class="about-card">
+          <div class="about-card-icon">🚀</div>
+          <div class="about-card-title">Producción real</div>
+          <div class="about-card-text">Proyectos desplegados en servidor con usuarios reales</div>
+        </div>
+        <div class="about-card">
+          <div class="about-card-icon">⚙️</div>
+          <div class="about-card-title">Automatización</div>
+          <div class="about-card-text">Flujos con n8n que eliminan procesos manuales</div>
+        </div>
+        <div class="about-card">
+          <div class="about-card-icon">💳</div>
+          <div class="about-card-title">Pagos integrados</div>
+          <div class="about-card-text">Stripe, webhooks y suscripciones recurrentes</div>
+        </div>
+        <div class="about-card">
+          <div class="about-card-icon">📚</div>
+          <div class="about-card-title">Aprendizaje continuo</div>
+          <div class="about-card-text">Cada proyecto amplía mi stack y criterio técnico</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── STACK ───────────────────────────────────────────────────── -->
+  <section id="stack">
+    <div class="section-header reveal">
+      <span class="section-tag">// 02. stack_tecnologico</span>
+      <h2 class="section-title">Herramientas & Tecnologías</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="stack-grid">
+      <div class="stack-item reveal">
+        <div class="stack-icon">🐍</div>
+        <div class="stack-name">Python</div>
+        <div class="stack-type">Backend</div>
+      </div>
+      <div class="stack-item reveal">
+        <div class="stack-icon">🟨</div>
+        <div class="stack-name">JavaScript</div>
+        <div class="stack-type">Frontend / Scripts</div>
+      </div>
+      <div class="stack-item reveal">
+        <div class="stack-icon">🌐</div>
+        <div class="stack-name">HTML & CSS</div>
+        <div class="stack-type">Frontend</div>
+      </div>
+      <div class="stack-item reveal">
+        <div class="stack-icon">🗄️</div>
+        <div class="stack-name">SQL</div>
+        <div class="stack-type">Bases de datos</div>
+      </div>
+      <div class="stack-item reveal">
+        <div class="stack-icon">🔄</div>
+        <div class="stack-name">n8n</div>
+        <div class="stack-type">Automatización</div>
+      </div>
+      <div class="stack-item reveal">
+        <div class="stack-icon">💳</div>
+        <div class="stack-name">Stripe</div>
+        <div class="stack-type">Pagos & Webhooks</div>
+      </div>
+      <div class="stack-item reveal">
+        <div class="stack-icon">🐳</div>
+        <div class="stack-name">Docker</div>
+        <div class="stack-type">Contenerización</div>
+      </div>
+      <div class="stack-item reveal">
+        <div class="stack-icon">🐙</div>
+        <div class="stack-name">Git & GitHub</div>
+        <div class="stack-type">Control de versiones</div>
+      </div>
+      <div class="stack-item reveal">
+        <div class="stack-icon">🖥️</div>
+        <div class="stack-name">Linux / VPS</div>
+        <div class="stack-type">Servidores</div>
+      </div>
+      <div class="stack-item reveal">
+        <div class="stack-icon">🔌</div>
+        <div class="stack-name">REST APIs</div>
+        <div class="stack-type">Integración</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PROJECTS ─────────────────────────────────────────────────── -->
+  <section id="projects">
+    <div class="section-header reveal">
+      <span class="section-tag">// 03. proyectos</span>
+      <h2 class="section-title">Lo que he construido</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="projects-grid">
+
+      <!-- Dashboard -->
+      <div class="project-card reveal">
+        <div class="project-header">
+          <div class="project-icon">📊</div>
+          <div class="project-links">
+            <a href="https://github.com/ulietellez21/Dashboard-Movums" target="_blank" rel="noopener" class="project-link" title="Ver en GitHub">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+            </a>
+          </div>
+        </div>
+        <div>
+          <div class="project-title">Dashboard Administrativo</div>
+          <div class="project-subtitle">Producción · 390+ commits</div>
+        </div>
+        <p class="project-desc">
+          Panel de control fullstack para gestión empresarial de una empresa de viajes.
+          Construido desde cero con arquitectura modular, sistema de roles y reportes en tiempo real.
+        </p>
+        <ul class="project-features">
+          <li>APIs REST para consumo de datos en tiempo real</li>
+          <li>Sistema de autenticación con roles y permisos</li>
+          <li>Reportes financieros y exportación de datos</li>
+          <li>Gestión de clientes, ventas y proveedores</li>
+          <li>Despliegue en VPS Linux con Docker</li>
+        </ul>
+        <div class="project-tags">
+          <span class="tag">Python</span>
+          <span class="tag">JavaScript</span>
+          <span class="tag">SQL</span>
+          <span class="tag">REST API</span>
+          <span class="tag">Docker</span>
+          <span class="tag">Linux</span>
+        </div>
+      </div>
+
+      <!-- n8n Bot -->
+      <div class="project-card reveal">
+        <div class="project-header">
+          <div class="project-icon">🤖</div>
+          <div class="project-links"></div>
+        </div>
+        <div>
+          <div class="project-title">Bot de Automatización</div>
+          <div class="project-subtitle">n8n · Integración multi-plataforma</div>
+        </div>
+        <p class="project-desc">
+          Sistema de flujos automatizados que conecta múltiples plataformas y servicios externos,
+          eliminando tareas manuales repetitivas y reduciendo tiempos de operación.
+        </p>
+        <ul class="project-features">
+          <li>Flujos de trabajo con triggers de webhooks</li>
+          <li>Integración con APIs externas y servicios de email</li>
+          <li>Procesamiento y transformación de datos automático</li>
+          <li>Notificaciones y alertas en tiempo real</li>
+          <li>Lógica condicional y manejo de errores</li>
+        </ul>
+        <div class="project-tags">
+          <span class="tag">n8n</span>
+          <span class="tag">Webhooks</span>
+          <span class="tag">APIs REST</span>
+          <span class="tag">Automatización</span>
+        </div>
+      </div>
+
+      <!-- Membresías Stripe -->
+      <div class="project-card reveal">
+        <div class="project-header">
+          <div class="project-icon">💳</div>
+          <div class="project-links"></div>
+        </div>
+        <div>
+          <div class="project-title">Plataforma de Membresías</div>
+          <div class="project-subtitle">Stripe · Arquitectura SaaS</div>
+        </div>
+        <p class="project-desc">
+          Sistema completo de suscripciones con cobros recurrentes integrado al dashboard.
+          Manejo de todo el ciclo de vida del pago desde la API de Stripe.
+        </p>
+        <ul class="project-features">
+          <li>Checkout con Stripe y planes de suscripción</li>
+          <li>Webhooks para eventos de pago en tiempo real</li>
+          <li>Gestión de estados: activo, cancelado, expirado</li>
+          <li>Autenticación y sesiones de usuario seguras</li>
+          <li>Integración con el dashboard de gestión</li>
+        </ul>
+        <div class="project-tags">
+          <span class="tag">Stripe</span>
+          <span class="tag">Webhooks</span>
+          <span class="tag">Python</span>
+          <span class="tag">SaaS</span>
+          <span class="tag">Auth</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── EXPERIENCE ───────────────────────────────────────────────── -->
+  <section id="experience">
+    <div class="section-header reveal">
+      <span class="section-tag">// 04. experiencia</span>
+      <h2 class="section-title">Trayectoria</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="timeline">
+
+      <div class="timeline-item reveal">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">Mayo 2025 — Actual</div>
+        <div class="timeline-role">Técnico en Soluciones</div>
+        <div class="timeline-company">Net Connect</div>
+        <ul class="timeline-list">
+          <li>Soporte técnico y resolución de incidencias</li>
+          <li>Capacitación y acompañamiento al cliente</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">2024</div>
+        <div class="timeline-role">Servicio Social</div>
+        <div class="timeline-company">CBT No.2 Texcoco (15ECTO131A)</div>
+        <ul class="timeline-list">
+          <li>Mantenimiento y soporte a equipos de cómputo</li>
+          <li>Administración y reparación de red interna</li>
+          <li>Instalación de software educativo y de gestión</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">2023</div>
+        <div class="timeline-role">Técnico en Instalación</div>
+        <div class="timeline-company">Soluciones Texcoco S.A. de C.V.</div>
+        <ul class="timeline-list">
+          <li>Instalación y configuración de cámaras de seguridad</li>
+          <li>Diagnósticos técnicos y soluciones para clientes</li>
+          <li>Ensamblaje y mantenimiento de hardware</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item reveal">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">2022 — 2025</div>
+        <div class="timeline-role">Ing. Sistemas Computacionales</div>
+        <div class="timeline-company">Universidad Liceo Pedro de Gante · Estudios concluidos, titulación en proceso</div>
+        <ul class="timeline-list">
+          <li>Desarrollo fullstack aplicado a proyectos reales</li>
+          <li>Bases de datos, redes y arquitectura de software</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── CONTACT ──────────────────────────────────────────────────── -->
+  <section id="contact">
+    <div class="section-header reveal">
+      <span class="section-tag">// 05. contacto</span>
+      <h2 class="section-title">Hablemos</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="contact-inner reveal">
+      <p>
+        Estoy buscando nuevas oportunidades donde pueda aportar desde el primer día.
+        Si tienes un proyecto interesante o una posición abierta, escríbeme.
+      </p>
+      <div class="contact-links">
+        <a href="mailto:ulie.tellez21@gmail.com" class="contact-link">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+          ulie.tellez21@gmail.com
+        </a>
+        <a href="https://github.com/ulietellez21" target="_blank" rel="noopener" class="contact-link">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+          github.com/ulietellez21
+        </a>
+      </div>
+      <div class="contact-availability">
+        <span class="avail-dot"></span>
+        Disponible para trabajar · Texcoco, Méx.
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ───────────────────────────────────────────────────── -->
+  <footer>
+    <div class="footer-text"><span>&lt;</span>ulises téllez<span>/&gt;</span> — 2025</div>
+    <div class="footer-text" style="font-size:0.75rem;">Hecho con HTML, CSS & JS vanilla</div>
+  </footer>
+
+  <!-- ─── JS ──────────────────────────────────────────────────────── -->
+  <script>
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    // Hamburger menu
+    const hamburger = document.getElementById('hamburger');
+    const navLinks  = document.getElementById('navLinks');
+    hamburger.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+    });
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => navLinks.classList.remove('open'));
+    });
+
+    // Intersection Observer for reveal animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 80);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Active nav link on scroll
+    const sections = document.querySelectorAll('section[id]');
+    const navAnchors = document.querySelectorAll('.nav-links a');
+    const activateNav = () => {
+      let current = '';
+      sections.forEach(sec => {
+        if (window.scrollY >= sec.offsetTop - 120) current = sec.id;
+      });
+      navAnchors.forEach(a => {
+        a.style.color = a.getAttribute('href') === `#${current}` ? 'var(--accent2)' : '';
+      });
+    };
+    window.addEventListener('scroll', activateNav);
+  </script>
+
+</body>
+</html>
